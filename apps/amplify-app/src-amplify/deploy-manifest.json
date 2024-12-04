@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "framework": { "name": "Express", "version": "4.21.1" },
+  "routes": [
+    {
+      "path": "/assets/*",
+      "target": {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "kind": "Static"
+      }
+    },
+    {
+      "path": "/*",
+      "target": {
+        "kind": "Compute",
+        "src": "default"
+      }
+    }
+  ],
+  "computeResources": [
+    {
+      "name": "default",
+      "runtime": "nodejs20.x",
+      "entrypoint": "serve.js"
+    }
+  ]
+}
