@@ -1,7 +1,7 @@
 import { Form, useFetcher } from "react-router";
 import invariant from "tiny-invariant";
 
-import { authApi, contactApi } from "~/api";
+import { authApi, contactApi } from "~/api/.server";
 import { Route } from "./+types/view";
 
 export const action = async ({
@@ -13,7 +13,7 @@ export const action = async ({
   const { accessToken } = await authApi.authenticateOrGoLogin(context, request);
   const formData = await request.formData();
   await contactApi.markAsFavoriteContact(
-    context,
+    context.api,
     params.id,
     formData.get("favorite") === "true",
     accessToken
@@ -28,7 +28,11 @@ export const loader = async ({
 }: Route.LoaderArgs) => {
   invariant(params.id, "Missing id param");
   const { accessToken } = await authApi.authenticateOrGoLogin(context, request);
-  const contact = await contactApi.getContact(context, params.id, accessToken);
+  const contact = await contactApi.getContact(
+    context.api,
+    params.id,
+    accessToken
+  );
   if (!contact) {
     throw new Response("Not Found", { status: 404 });
   }

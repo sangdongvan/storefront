@@ -1,5 +1,5 @@
 import { type LoaderFunction, type LoaderFunctionArgs } from "react-router";
-import { authApi } from "~/api";
+import { authApi } from "~/api/.server";
 
 export const loader: LoaderFunction = async ({
   context,

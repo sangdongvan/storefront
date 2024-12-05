@@ -13,5 +13,6 @@ export default [
     route(":id/edit", "./routes/contacts/edit.tsx"),
     route(":id/destroy", "./routes/contacts/destroy.tsx"),
   ]),
-  route("api/get-access-token", "./routes/api/get-access-token.tsx"),
+  route("api/get-access-token", "./routes/api/get-access-token.server.ts"),
+  route("api/get-app-config", "./routes/api/get-app-config.server.ts"),
 ] satisfies RouteConfig;

@@ -1,17 +1,18 @@
 import type { z } from "zod";
-import type { schemas } from "./api.gen";
-import { AppContext } from "~/context";
+import type { createApiClient, schemas } from "./api.gen";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Handful of helper functions to be called from route loaders and actions
 ////////////////////////////////////////////////////////////////////////////////
 
+type Api = ReturnType<typeof createApiClient>;
+
 export async function getContacts(
-  ctx: AppContext,
+  api: Api,
   query: string | null,
   token: string
 ) {
-  const findRes = await ctx.api.get("/api/Contact/Find", {
+  const findRes = await api.get("/api/Contact/Find", {
     ...(query === null ? {} : { queries: { Q: query } }),
     headers: {
       Authorization: "Bearer " + token,
@@ -20,21 +21,17 @@ export async function getContacts(
   return findRes.contacts;
 }
 
-export async function createEmptyContact(ctx: AppContext, token: string) {
-  const createEmptyRes = await ctx.api.post(
-    "/api/Contact/CreateEmpty",
-    undefined,
-    {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    }
-  );
+export async function createEmptyContact(api: Api, token: string) {
+  const createEmptyRes = await api.post("/api/Contact/CreateEmpty", undefined, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
   return createEmptyRes;
 }
 
-export async function getContact(ctx: AppContext, id: string, token: string) {
-  const findOneRes = await ctx.api.get("/api/Contact/FindOne", {
+export async function getContact(api: Api, id: string, token: string) {
+  const findOneRes = await api.get("/api/Contact/FindOne", {
     queries: { Id: id },
     headers: {
       Authorization: "Bearer " + token,
@@ -45,11 +42,11 @@ export async function getContact(ctx: AppContext, id: string, token: string) {
 
 type UpdateOneRequest = z.infer<typeof schemas.UpdateOneContactRequest>;
 export async function updateContact(
-  ctx: AppContext,
+  api: Api,
   request: UpdateOneRequest,
   token: string
 ) {
-  const updateOneRes = await ctx.api.post("/api/Contact/UpdateOne", request, {
+  const updateOneRes = await api.post("/api/Contact/UpdateOne", request, {
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -61,12 +58,12 @@ export async function updateContact(
 }
 
 export async function markAsFavoriteContact(
-  ctx: AppContext,
+  api: Api,
   id: string,
   favorite: boolean,
   token: string
 ) {
-  await ctx.api.post(
+  await api.post(
     "/api/Contact/MarkAsFavorite",
     {
       id,
@@ -80,12 +77,8 @@ export async function markAsFavoriteContact(
   );
 }
 
-export async function deleteContact(
-  ctx: AppContext,
-  id: string,
-  token: string
-) {
-  await ctx.api.post(
+export async function deleteContact(api: Api, id: string, token: string) {
+  await api.post(
     "/api/Contact/DeleteOne",
     {
       id,

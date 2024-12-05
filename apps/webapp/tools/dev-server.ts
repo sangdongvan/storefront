@@ -1,5 +1,5 @@
 import express from "express";
-import { StorefrontApi } from "./config";
+import { StorefrontApi } from "../config";
 
 const PORT = Number.parseInt(process.env.PORT || "3000");
 

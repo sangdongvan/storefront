@@ -1,10 +1,10 @@
 import invariant from "tiny-invariant";
 import type { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
-import { accessTokenCookie, refreshTokenCookie } from "../auth/cookies.server";
+import { accessTokenCookie, refreshTokenCookie } from "~/auth/cookies.server";
 import { redirect } from "react-router";
 import { AxiosError } from "axios";
-import { AppContext } from "~/context";
+import { AppContext } from "~/context.server";
 
 type TokenResponse = {
   accessToken: string;

@@ -3,17 +3,13 @@ import { Form, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 import type { Route } from "./+types/edit";
 
-import { authApi, contactApi } from "~/api";
-import { schemas } from "~/api/api.gen";
+import { schemas, clientContactApi } from "~/api/.client";
+import { getAccessToken } from "~/auth/token.client";
+import { getClientContext } from "~/context.client";
 
-export const action = async ({ context, request }: Route.ActionArgs) => {
-  const { accessToken: token, error } = await authApi.authenticateOrError(
-    context,
-    request
-  );
-  if (error) {
-    return Response.json({}, { status: 401 });
-  }
+export const clientAction = async ({ request }: Route.ActionArgs) => {
+  const token = await getAccessToken();
+  const context = await getClientContext();
 
   // TODO: Handle validation error
   const formPayload = Object.fromEntries(await request.formData());
@@ -21,19 +17,20 @@ export const action = async ({ context, request }: Route.ActionArgs) => {
     formPayload
   );
 
-  await contactApi.updateContact(context, updateOneRequest, token);
+  await clientContactApi.updateContact(context.api, updateOneRequest, token);
 
   return redirect(`/contacts/${updateOneRequest.id}`);
 };
 
-export const loader = async ({
-  context,
-  request,
-  params,
-}: Route.LoaderArgs) => {
+export const clientLoader = async ({ params }: Route.ClientLoaderArgs) => {
   invariant(params.id, "Missing id param");
-  const { accessToken } = await authApi.authenticateOrGoLogin(context, request);
-  const contact = await contactApi.getContact(context, params.id, accessToken);
+  const token = await getAccessToken();
+  const context = await getClientContext();
+  const contact = await clientContactApi.getContact(
+    context.api,
+    params.id,
+    token
+  );
   if (!contact) {
     throw new Response("Not Found", { status: 404 });
   }

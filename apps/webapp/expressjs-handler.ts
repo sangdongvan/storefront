@@ -1,8 +1,7 @@
 import { createRequestHandler } from "@react-router/express";
-import JwksRsa from "jwks-rsa";
 import "react-router";
-import { Api, createApi } from "~/api";
-import { AppContext } from "~/context";
+import { Api, createApi, JwksRsa } from "~/api/.server";
+import { AppContext } from "~/context.server";
 
 declare module "react-router" {
   export interface AppLoadContext extends AppContext {}
@@ -36,6 +35,9 @@ const expressjsHandler = createRequestHandler({
   getLoadContext(req) {
     const storefrontApi = req.app.get("Config.StorefrontApi");
     return {
+      config: {
+        storefrontApi,
+      },
       api: getApi(storefrontApi),
       jwksClient: getJwksClient(storefrontApi),
     };

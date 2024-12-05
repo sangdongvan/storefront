@@ -1,8 +1,7 @@
-import type { ActionFunctionArgs } from "react-router";
 import { redirect } from "react-router";
 import invariant from "tiny-invariant";
 
-import { authApi, contactApi } from "~/api";
+import { authApi, contactApi } from "~/api/.server";
 import { Route } from "./+types/destroy";
 
 export const action = async ({
@@ -12,6 +11,6 @@ export const action = async ({
 }: Route.ActionArgs) => {
   invariant(params.id, "Missing id param");
   const { accessToken } = await authApi.authenticateOrGoLogin(context, request);
-  await contactApi.deleteContact(context, params.id, accessToken);
+  await contactApi.deleteContact(context.api, params.id, accessToken);
   return redirect("/contacts");
 };

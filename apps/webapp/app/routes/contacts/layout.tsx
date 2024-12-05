@@ -1,8 +1,7 @@
 import { redirect } from "react-router";
 import { Form, NavLink, Outlet, useNavigation, useSubmit } from "react-router";
 import { useEffect } from "react";
-
-import { authApi, contactApi } from "~/api";
+import { authApi, contactApi } from "~/api/.server";
 import { accessTokenCookie, refreshTokenCookie } from "~/auth/cookies.server";
 import { Route } from "./+types/layout";
 
@@ -15,7 +14,10 @@ export const action = async ({ context, request }: Route.ActionArgs) => {
       context,
       request
     );
-    const contact = await contactApi.createEmptyContact(context, accessToken);
+    const contact = await contactApi.createEmptyContact(
+      context.api,
+      accessToken
+    );
     return redirect(`${contact.id}/edit`);
   }
 
@@ -47,7 +49,7 @@ export const loader = async ({ context, request }: Route.LoaderArgs) => {
   const { accessToken } = await authApi.authenticateOrGoLogin(context, request);
   const url = new URL(request.url);
   const q = url.searchParams.get("q");
-  const contacts = await contactApi.getContacts(context, q, accessToken);
+  const contacts = await contactApi.getContacts(context.api, q, accessToken);
   return { contacts, q };
 };
 
