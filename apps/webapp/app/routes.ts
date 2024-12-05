@@ -9,13 +9,11 @@ import {
 export default [
   index("./routes/home.tsx"),
   route("login", "./routes/login.tsx"),
-  layout("./routes/contacts/layout.tsx", [
-    ...prefix("contacts", [
-      index("./routes/contacts/list.tsx"),
-      route(":id", "./routes/contacts/view.tsx"),
-      route(":id/edit", "./routes/contacts/edit.tsx"),
-      route(":id/destroy", "./routes/contacts/destroy.tsx"),
-    ]),
+  route("contacts", "./routes/contacts/layout.tsx", [
+    index("./routes/contacts/list.tsx"),
+    route(":id", "./routes/contacts/view.tsx"),
+    route(":id/edit", "./routes/contacts/edit.tsx"),
+    route(":id/destroy", "./routes/contacts/destroy.tsx"),
   ]),
   route("api/get-access-token", "./routes/api/get-access-token.server.ts"),
   route("api/get-app-config", "./routes/api/get-app-config.server.ts"),
