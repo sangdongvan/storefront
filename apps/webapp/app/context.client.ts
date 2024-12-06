@@ -1,13 +1,18 @@
 import { Api, createApi } from "~/api/.client";
 import { AppConfig } from "~/config";
 import { isAppConfig } from "./config/app-config";
+import axios from "axios";
 
 var api: Api | undefined;
 function getApi(storefrontApi: string): Api {
   if (api) {
     return api;
   }
-  api = createApi(storefrontApi);
+  api = createApi(storefrontApi, {
+    axiosInstance: axios.create({
+      adapter: "fetch",
+    }),
+  });
   return api!;
 }
 
